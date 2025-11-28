@@ -1,64 +1,64 @@
-{{ name | escape | underline }}
+{{ "{{ name | escape | underline }}" }}
 
-.. automodule:: {{ fullname }}
+.. automodule:: {{ '{{ fullname }}' }}
 
    {% block attributes %}
    {%- if attributes %}
-   .. rubric:: {{ _('Module Attributes') }}
+   .. rubric:: {{ "{{ _('Module Attributes') }}" }}
 
    .. autosummary::
       :toctree:
    {% for item in attributes %}
-      {{ item }}
+      {{ '{{ item }}' }}
    {%- endfor %}
    {% endif %}
    {%- endblock %}
 
    {%- block functions %}
    {%- if functions %}
-   .. rubric:: {{ _('Functions') }}
+   .. rubric:: {{ "{{ _('Functions') }}" }}
 
    .. autosummary::
       :toctree:
    {% for item in functions %}
-      {{ item }}
+      {{ '{{ item }}' }}
    {%- endfor %}
    {% endif %}
    {%- endblock %}
 
    {%- block classes %}
    {%- if classes %}
-   .. rubric:: {{ _('Classes') }}
+   .. rubric:: {{ "{{ _('Classes') }}" }}
 
    .. autosummary::
       :toctree:
    {% for item in classes %}
-      {{ item }}
+      {{ '{{ item }}' }}
    {%- endfor %}
    {% endif %}
    {%- endblock %}
 
    {%- block exceptions %}
    {%- if exceptions %}
-   .. rubric:: {{ _('Exceptions') }}
+   .. rubric:: {{ "{{ _('Exceptions') }}" }}
 
    .. autosummary::
       :toctree:
    {% for item in exceptions %}
-      {{ item }}
+      {{ '{{ item }}' }}
    {%- endfor %}
    {% endif %}
    {%- endblock %}
 
 {%- block modules %}
 {%- if modules %}
-.. rubric:: {{ _('Submodules') }}
+.. rubric:: {{ "{{ _('Submodules') }}" }}
 
 .. autosummary::
    :toctree:
    :recursive:
 {% for item in modules %}
-   {{ item }}
+   {{ '{{ item }}' }}
 {%- endfor %}
 {% endif %}
 {%- endblock %}
