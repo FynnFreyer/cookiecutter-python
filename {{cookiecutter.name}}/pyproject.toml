@@ -33,8 +33,8 @@ dev = [
 ]
 
 [project.urls]
-'Repository' = '{{cookiecutter.repo_org}}/{{cookiecutter.name}}'
-'Issues' = '{{cookiecutter.repo_org}}/{{cookiecutter.name}}/issues'
+'Repository' = 'https://{{cookiecutter.repo_url}}/{{cookiecutter.repo_org}}/{{cookiecutter.name}}'
+'Issues' = 'https://{{cookiecutter.repo_url}}/{{cookiecutter.repo_org}}/{{cookiecutter.name}}/issues'
 # 'Docs' = 'https://fynnfreyer.github.io/dotenv-utils/'
 
 [build-system]

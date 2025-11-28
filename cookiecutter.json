@@ -2,5 +2,6 @@
   "name": "project-name",
   "description": "Description for a new project...",
   "module": "module_name",
-  "repo_org": "https://gitlab-ef51.ef5.verwalt-berlin.de/ffreyer/"
+  "repo_url": "gitlab-ef51.ef5.verwalt-berlin.de",
+  "repo_org": "ffreyer"
 }
