@@ -1,3 +1,4 @@
+{% raw %}
 {{ name | escape | underline }}
 
 .. currentmodule:: {{ module }}
@@ -29,3 +30,4 @@
    {%- endfor %}
    {% endif %}
    {% endblock %}
+{% endraw %}

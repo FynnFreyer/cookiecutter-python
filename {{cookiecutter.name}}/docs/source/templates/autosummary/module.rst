@@ -1,3 +1,4 @@
+{% raw %}
 {{ name | escape | underline }}
 
 .. automodule:: {{ fullname }}
@@ -62,3 +63,4 @@
 {%- endfor %}
 {% endif %}
 {%- endblock %}
+{% endraw %}
