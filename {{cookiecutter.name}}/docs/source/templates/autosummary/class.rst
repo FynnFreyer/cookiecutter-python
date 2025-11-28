@@ -1,31 +1,31 @@
-{{ "{{ name | escape | underline }}" }}
+{{ name | escape | underline }}
 
-.. currentmodule:: {{ '{{ module }}' }}
+.. currentmodule:: {{ module }}
 
-.. autoclass:: {{ '{{ objname }}' }}
+.. autoclass:: {{ objname }}
    :members:
 
    {% block methods %}
    .. automethod:: __init__
 
    {% if methods %}
-   .. rubric:: {{ "{{ _('Methods') }}" }}
+   .. rubric:: {{ _('Methods') }}
 
    .. autosummary::
    {% for item in methods %}
-      ~{{ '{{ name }}' }}.{{ '{{ item }}' }}
+      ~{{ name }}.{{ item }}
    {%- endfor %}
    {% endif %}
    {% endblock %}
 
    {% block attributes %}
    {% if attributes %}
-   .. rubric:: {{ "{{ _('Attributes') }}" }}
+   .. rubric:: {{ _('Attributes') }}
 
    .. autosummary::
       :toctree:
    {% for item in attributes %}
-      ~{{ '{{ name }}' }}.{{ '{{ item }}' }}
+      ~{{ name }}.{{ item }}
    {%- endfor %}
    {% endif %}
    {% endblock %}

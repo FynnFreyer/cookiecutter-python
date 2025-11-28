@@ -1,5 +1,5 @@
-.. {{ "{{ name | escape | underline }}" }}
+.. {{ name | escape | underline }}
 
-.. currentmodule:: {{ '{{ module }}' }}
+.. currentmodule:: {{ module }}
 
-.. auto{{ '{{ objtype }}' }}:: {{ '{{ objname }}' }}
+.. auto{{ objtype }}:: {{ objname }}
