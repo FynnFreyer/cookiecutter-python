@@ -37,6 +37,9 @@ dev = [
 'Issues' = 'https://{{cookiecutter.repo_url}}/{{cookiecutter.repo_org}}/{{cookiecutter.name}}/issues'
 # 'Docs' = 'https://fynnfreyer.github.io/dotenv-utils/'
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{cookiecutter.module}}"]
+
 [project.scripts]
 {{cookiecutter.name}} = "{{cookiecutter.module}}.__main__:main"
 
