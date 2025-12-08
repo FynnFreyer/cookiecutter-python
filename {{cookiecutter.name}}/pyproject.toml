@@ -74,6 +74,11 @@ select = ['E', 'F', 'B', 'Q']
 ignore = ['B905']
 mccabe = { max-complexity = 5 }
 
+[tool.mypy]
+mypy_path = ['$MYPY_CONFIG_FILE_DIR/src']
+namespace_packages = true
+explicit_package_bases = true
+
 # Testing options
 [tool.pytest.ini_options]
 pythonpath = '.'
