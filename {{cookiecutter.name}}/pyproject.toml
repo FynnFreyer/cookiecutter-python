@@ -35,7 +35,8 @@ dev = [
 [project.urls]
 'Repository' = 'https://{{cookiecutter.repo_url}}/{{cookiecutter.repo_org}}/{{cookiecutter.name}}'
 'Issues' = 'https://{{cookiecutter.repo_url}}/{{cookiecutter.repo_org}}/{{cookiecutter.name}}/issues'
-# 'Docs' = 'https://fynnfreyer.github.io/dotenv-utils/'
+# TODO: configure pages deployment for docs and change URL accordingly
+'Docs' = 'https://{{cookiecutter.repo_url}}/{{cookiecutter.repo_org}}/{{cookiecutter.name}}/-/wikis/home'
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/{{cookiecutter.module}}"]
@@ -49,10 +50,10 @@ build-backend = 'hatchling.build'
 
 # Dynamic meta-data sources
 [tool.hatch]
-description = { path = '{{cookiecutter.module}}/__about__.py' }
-version = { path = '{{cookiecutter.module}}/__about__.py' }
-authors = { path = '{{cookiecutter.module}}/__about__.py' }
-maintainers = { path = '{{cookiecutter.module}}/__about__.py' }
+description = { path = 'src/{{cookiecutter.module}}/__about__.py' }
+version = { path = 'src/{{cookiecutter.module}}/__about__.py' }
+authors = { path = 'src/{{cookiecutter.module}}/__about__.py' }
+maintainers = { path = 'src/{{cookiecutter.module}}/__about__.py' }
 
 # Formatting options
 [tool.autopep8]
