@@ -18,7 +18,7 @@ help:  ## Show this help.
 
 # Ensure uv is installed for dependency management.
 ifneq (,$(shell command -v uv))
-    $(shell python3 -m pip install uv)
+ 	$(shell python3 -m pip install uv)
 endif
 
 ##
