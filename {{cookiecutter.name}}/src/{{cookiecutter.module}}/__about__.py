@@ -8,9 +8,9 @@ __description__ = "{{cookiecutter.description}}"
 __version__ = "0.0.1.alpha"
 
 # attribution
-__org__ = "ITDZ-Berlin"
+__org__ = ""
 __authors__ = [
-    {"name": "Fynn Freyer", "email": "fynn.freyer@itdz-berlin.de"},
+    {"name": "Fynn Freyer", "email": "fynn@fynns.site"},
 ]
 __maintainers__ = __authors__
 __author_string__ = "; ".join(f"{author['name']} <{author['email']}>" for author in __authors__)
