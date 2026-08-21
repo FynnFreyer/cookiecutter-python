@@ -1,3 +1,5 @@
-Custom License Terms
+Custom License Terms for {project_name}
+
+Copyright (c) {year} {author}
 
 Please replace this file with the specific licensing terms and conditions applicable to this project.
