@@ -24,7 +24,7 @@ __authors_latex = r"\and ".join(author["name"] for author in __authors__)
 
 project = "{{cookiecutter.name}}"
 author = __authors_plain
-copyright = f"Copyright 2025 {__authors_plain}"
+copyright = f"Copyright {{cookiecutter.year}} {__authors_plain}"
 release = __version__
 
 # export these variables for usage in rst files

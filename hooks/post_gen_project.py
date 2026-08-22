@@ -2,20 +2,67 @@
 Hook that executes after the prompts ran and variables are defined.
 """
 
-import json
-import re
 import subprocess
 from pathlib import Path
-from urllib.request import urlopen
 
 REPO_URL = "{{ cookiecutter.repo_url }}"
 REPO_ORG = "{{ cookiecutter.repo_org }}"
 PROJECT_NAME = "{{ cookiecutter.name }}"
 
-
 LICENSE_ID = "{{ cookiecutter.license }}"
 YEAR = "{{ cookiecutter.year }}"
 AUTHOR = "{{ cookiecutter.full_name }}"
+EMAIL = "{{ cookiecutter.email }}"
+LICENSE_TEXT = """{{- cookiecutter._license_text -}}"""
+
+
+def render_license(
+    license_id: str,
+    year: str,
+    author: str,
+    project_name: str,
+    email: str,
+    license_text: str = "",
+) -> None:
+    """Render a LICENSE file from the license text or local licenses directory.
+
+    :param license_id: Identifier or name of the license (e.g. 'MIT', 'None').
+    :param year: Copyright year.
+    :param author: Author / copyright holder name.
+    :param project_name: Name of the project.
+    :param email: Author email address.
+    :param license_text: Embedded license template text from Jinja context if available.
+    :return: None
+    """
+    if license_id == "None":
+        return
+
+    text = license_text
+    if not text:
+        # Fallback to looking up license file from known relative paths
+        template_paths = [
+            Path(f"../licenses/{license_id}.txt"),
+            Path(f"licenses/{license_id}.txt"),
+            Path(__file__).resolve().parent.parent / "licenses" / f"{license_id}.txt",
+        ]
+
+        for candidate in template_paths:
+            if candidate.exists() and candidate.is_file():
+                text = candidate.read_text(encoding="utf-8")
+                break
+
+    if not text:
+        raise FileNotFoundError(f"License template for '{license_id}' could not be loaded.")
+
+    rendered = text.format(
+        year=year,
+        author=author,
+        project_name=project_name,
+        email=email,
+        org="",
+    )
+
+    Path("LICENSE").write_text(rendered, encoding="utf-8")
 
 
 def init_git_repository(repo_url: str, repo_org: str, project_name: str) -> None:
@@ -43,36 +90,6 @@ def init_git_repository(repo_url: str, repo_org: str, project_name: str) -> None
         subprocess.run(cmd, check=True)
 
 
-def generate_license_file(spdx_id: str, year: str, author: str) -> None:
-    """
-    Fetch and render an SPDX license to a local LICENSE file.
-
-    :param spdx_id: SPDX short identifier (e.g., 'MIT', 'Apache-2.0').
-    :param year: Copyright year.
-    :param author: Copyright holder name.
-    :return: None
-    :raises Exception: If the license cannot be retrieved or written.
-    """
-    # Fetch license details from the official SPDX JSON dataset
-    url = f"https://raw.githubusercontent.com/spdx/license-list-data/main/json/details/{spdx_id}.json"
-    with urlopen(url) as response:
-        data = json.loads(response.read().decode("utf-8"))
-
-    template = data.get("standardLicenseTemplate", data.get("licenseText", ""))
-
-    # Clean SPDX variable tags and inject user metadata
-    text = re.sub(
-        r'<<var;name="copyright";original=(.*?);match=.*?>>',
-        f"Copyright (c) {year} {author}",
-        template,
-        flags=re.DOTALL,
-    )
-    text = re.sub(r"<<beginOptional>>|<<endOptional>>", "", text)
-
-    Path("LICENSE").write_text(text)
-
-
 if __name__ == "__main__":
+    render_license(LICENSE_ID, YEAR, AUTHOR, PROJECT_NAME, EMAIL, LICENSE_TEXT)
     init_git_repository(REPO_URL, REPO_ORG, PROJECT_NAME)
-    if LICENSE_ID != "None":
-        generate_license_file(LICENSE_ID, YEAR, AUTHOR)
