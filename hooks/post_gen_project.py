@@ -13,7 +13,7 @@ LICENSE_ID = "{{ cookiecutter.license }}"
 YEAR = "{{ cookiecutter.year }}"
 AUTHOR = "{{ cookiecutter.full_name }}"
 EMAIL = "{{ cookiecutter.email }}"
-LICENSE_TEXT = """{{- cookiecutter._license_text -}}"""
+ORIGINAL_HOOK_FILE = Path(r"""{{ _cookiecutter_hook_file_path if _cookiecutter_hook_file_path is defined else (__file__ if not __file__.startswith(('/tmp/', '/var/tmp/')) else '') }}""")
 
 
 def render_license(
@@ -22,38 +22,46 @@ def render_license(
     author: str,
     project_name: str,
     email: str,
-    license_text: str = "",
 ) -> None:
-    """Render a LICENSE file from the license text or local licenses directory.
+    """Render a LICENSE file from the template repository's licenses/ directory.
 
     :param license_id: Identifier or name of the license (e.g. 'MIT', 'None').
     :param year: Copyright year.
     :param author: Author / copyright holder name.
     :param project_name: Name of the project.
     :param email: Author email address.
-    :param license_text: Embedded license template text from Jinja context if available.
     :return: None
     """
     if license_id == "None":
         return
 
-    text = license_text
-    if not text:
-        # Fallback to looking up license file from known relative paths
-        template_paths = [
-            Path(f"../licenses/{license_id}.txt"),
-            Path(f"licenses/{license_id}.txt"),
-            Path(__file__).resolve().parent.parent / "licenses" / f"{license_id}.txt",
-        ]
+    template_file = None
 
-        for candidate in template_paths:
-            if candidate.exists() and candidate.is_file():
-                text = candidate.read_text(encoding="utf-8")
+    # 1. Check relative to original hook file if resolved
+    if ORIGINAL_HOOK_FILE and ORIGINAL_HOOK_FILE.is_file():
+        candidate = ORIGINAL_HOOK_FILE.resolve().parent.parent / "licenses" / f"{license_id}.txt"
+        if candidate.exists():
+            template_file = candidate
+
+    # 2. Check relative to __file__ (in case hook was executed in place)
+    if template_file is None:
+        candidate = Path(__file__).resolve().parent.parent / "licenses" / f"{license_id}.txt"
+        if candidate.exists():
+            template_file = candidate
+
+    # 3. Check current working directory and parents (in case cwd is in template or output dir)
+    if template_file is None:
+        candidate_dirs = [Path.cwd(), *Path.cwd().parents]
+        for d in candidate_dirs:
+            candidate = d / "licenses" / f"{license_id}.txt"
+            if candidate.exists():
+                template_file = candidate
                 break
 
-    if not text:
-        raise FileNotFoundError(f"License template for '{license_id}' could not be loaded.")
+    if template_file is None:
+        raise FileNotFoundError(f"License template for '{license_id}' not found.")
 
+    text = template_file.read_text(encoding="utf-8")
     rendered = text.format(
         year=year,
         author=author,
@@ -91,5 +99,5 @@ def init_git_repository(repo_url: str, repo_org: str, project_name: str) -> None
 
 
 if __name__ == "__main__":
-    render_license(LICENSE_ID, YEAR, AUTHOR, PROJECT_NAME, EMAIL, LICENSE_TEXT)
+    render_license(LICENSE_ID, YEAR, AUTHOR, PROJECT_NAME, EMAIL)
     init_git_repository(REPO_URL, REPO_ORG, PROJECT_NAME)
