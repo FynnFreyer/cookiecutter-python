@@ -13,7 +13,36 @@ LICENSE_ID = "{{ cookiecutter.license }}"
 YEAR = "{{ cookiecutter.year }}"
 AUTHOR = "{{ cookiecutter.full_name }}"
 EMAIL = "{{ cookiecutter.email }}"
-ORIGINAL_HOOK_FILE = Path(r"""{{ _cookiecutter_hook_file_path if _cookiecutter_hook_file_path is defined else (__file__ if not __file__.startswith(('/tmp/', '/var/tmp/')) else '') }}""")
+REPO_DIR = r"{{ cookiecutter._repo_dir }}"
+OUTPUT_DIR = r"{{ cookiecutter._output_dir }}"
+
+
+def resolve_license_template(license_id: str) -> Path:
+    template_file = None
+
+    # Resolve REPO_DIR (if relative, resolve relative to OUTPUT_DIR or current directory)
+    if REPO_DIR:
+        repo_path = Path(REPO_DIR)
+        if repo_path.is_absolute():
+            candidate = repo_path / "licenses" / f"{license_id}.txt"
+            if candidate.is_file():
+                template_file = candidate
+        else:
+            # Check relative to OUTPUT_DIR (where cookiecutter was executed)
+            if OUTPUT_DIR:
+                candidate = (Path(OUTPUT_DIR) / repo_path / "licenses" / f"{license_id}.txt").resolve()
+                if candidate.is_file():
+                    template_file = candidate
+            # Check relative to parent of generated project (cwd is generated project)
+            if template_file is None:
+                candidate = (Path.cwd().parent / repo_path / "licenses" / f"{license_id}.txt").resolve()
+                if candidate.is_file():
+                    template_file = candidate
+
+    if template_file is None:
+        raise FileNotFoundError(f"License template for '{license_id}' not found.")
+
+    return template_file
 
 
 def render_license(
@@ -35,32 +64,7 @@ def render_license(
     if license_id == "None":
         return
 
-    template_file = None
-
-    # 1. Check relative to original hook file if resolved
-    if ORIGINAL_HOOK_FILE and ORIGINAL_HOOK_FILE.is_file():
-        candidate = ORIGINAL_HOOK_FILE.resolve().parent.parent / "licenses" / f"{license_id}.txt"
-        if candidate.exists():
-            template_file = candidate
-
-    # 2. Check relative to __file__ (in case hook was executed in place)
-    if template_file is None:
-        candidate = Path(__file__).resolve().parent.parent / "licenses" / f"{license_id}.txt"
-        if candidate.exists():
-            template_file = candidate
-
-    # 3. Check current working directory and parents (in case cwd is in template or output dir)
-    if template_file is None:
-        candidate_dirs = [Path.cwd(), *Path.cwd().parents]
-        for d in candidate_dirs:
-            candidate = d / "licenses" / f"{license_id}.txt"
-            if candidate.exists():
-                template_file = candidate
-                break
-
-    if template_file is None:
-        raise FileNotFoundError(f"License template for '{license_id}' not found.")
-
+    template_file = resolve_license_template(license_id)
     text = template_file.read_text(encoding="utf-8")
     rendered = text.format(
         year=year,
