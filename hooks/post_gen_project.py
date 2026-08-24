@@ -94,12 +94,16 @@ def init_git_repository(repo_url: str, repo_org: str, project_name: str) -> None
         ["git", "remote", "add", "origin", remote_target],
         ["git", "add", "."],
         ["git", "commit", "-m", commit_msg],
-        ["git", "push", "--set-upstream", "origin", "main"],
     ]
 
     # Ensure execution halts immediately if a git pipeline step fails
     for cmd in commands:
         subprocess.run(cmd, check=True)
+
+    try:
+        subprocess.run(["git", "push", "--set-upstream", "origin", "main"], check=True)
+    except subprocess.CalledProcessError as e:
+        print("Unable to push. Have you created the repository on the remote?")
 
 
 if __name__ == "__main__":
