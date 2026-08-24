@@ -28,6 +28,8 @@ dev = [
     'ruff',
     'sphinx',
     'sphinx-autodoc-typehints',
+    'sphinxcontrib-mermaid',
+    'sphinxcontrib-plantuml',
     'sphinxcontrib-relativeinclude',
     'sphinxcontrib-svg2pdfconverter[CairoSVG]',
 ]

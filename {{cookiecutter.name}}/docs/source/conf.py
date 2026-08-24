@@ -42,6 +42,8 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx_autodoc_typehints",
     "sphinxcontrib.cairosvgconverter",
+    "sphinxcontrib.mermaid",
+    "sphinxcontrib.plantuml",
     "sphinxcontrib.relativeinclude",
 ]
 
@@ -81,3 +83,22 @@ latex_elements = {
 
 add_module_names = False
 autodoc_member_order = "bysource"
+
+# -- Diagram options ---------------------------------------------------------
+# https://pypi.org/project/sphinxcontrib-mermaid/
+# https://pypi.org/project/sphinxcontrib-plantuml/
+
+mermaid_cmd = "mmdc"
+
+plantuml = "plantuml"
+plantuml_latex_output_format = "eps"
+
+
+# -- App setup ---------------------------------------------------------------
+
+def setup(app):
+    """Register additional Sphinx directives and aliases."""
+    # alias the `uml` directive to `plantuml` and `puml`, to ensure compatibility with the PyCharm-PlantUML-Integration
+    from sphinxcontrib.plantuml import UmlDirective
+    app.add_directive("plantuml", UmlDirective)
+    app.add_directive("puml", UmlDirective)
