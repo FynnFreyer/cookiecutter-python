@@ -8,13 +8,17 @@ This is a clean template that scripts can be based on.
 
 from argparse import ArgumentParser, Namespace, RawDescriptionHelpFormatter
 from pathlib import Path
-from sys import argv, stderr
+from sys import exit, stderr
 from traceback import format_exception, format_exception_only
 from typing import Any
 
-
-from .__about__ import __author_string__, __copyright__, __description__, __maintainers__, __project__, __version__
-
+from .__about__ import (
+    __author_string__,
+    __copyright__,
+    __description__,
+    __project__,
+    __version__,
+)
 
 # TODO: globals go here (use SPARINGLY, for reasoning see https://dl.acm.org/doi/10.1145/953353.953355)
 VERBOSE = False
@@ -81,7 +85,7 @@ def main(argv: list[str] | None = None) -> int:
         args = parse_args(argv)
         helper(args)
         return 0
-    except Exception as e:
+    except Exception as e:  # noqa -- broadly catching anything is what we want here
         err = "".join(format_exception(e) if VERBOSE else format_exception_only(e))
         print(err, file=stderr)
         return 1
