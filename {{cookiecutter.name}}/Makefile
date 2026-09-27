@@ -57,16 +57,28 @@ endif
 requirements: requirements-min requirements-dev ## (Re-)generate and update both requirements.txt and requirements-dev.txt.
 
 ##
-##   Installing Dependencies
+##   Syncing Dependencies
 ##
 
-install-min: requirements.txt ## Synchronise contents of venv and requirements.txt.
+sync-min: requirements.txt ## Synchronise contents of venv and requirements.txt.
 	uv pip sync requirements.txt
 
-install-dev: requirements-dev.txt ## Synchronise contents of venv and requirements-dev.txt.
+sync-dev: requirements-dev.txt ## Synchronise contents of venv and requirements-dev.txt.
 	uv pip sync requirements-dev.txt
 
-install: install-dev ## Synonymous with install-dev
+sync: sync-dev ## Synonymous with sync-dev.
+
+##
+##   Installing the Project
+##
+
+install-min: sync-min ## Install the project with minimal dependencies.
+	uv pip install . --no-deps
+
+install-dev:  sync-dev ## Install the project editable with dev dependencies.
+	uv pip install -e . --no-deps
+
+install: sync-min ## Synonymous with install-min.
 
 ##
 ##   Updating Dependencies
