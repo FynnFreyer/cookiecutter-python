@@ -60,11 +60,13 @@ requirements: requirements-min requirements-dev ## (Re-)generate and update both
 ##   Syncing Dependencies
 ##
 
+DEFAULT_SYNC_ARGS = --allow-empty-requirements --torch-backend=auto
+
 sync-min: requirements.txt ## Synchronise contents of venv and requirements.txt.
-	uv pip sync requirements.txt
+	uv pip sync $(DEFAULT_SYNC_ARGS) requirements.txt
 
 sync-dev: requirements-dev.txt ## Synchronise contents of venv and requirements-dev.txt.
-	uv pip sync requirements-dev.txt
+	uv pip sync $(DEFAULT_SYNC_ARGS) requirements-dev.txt
 
 sync: sync-dev ## Synonymous with sync-dev.
 
