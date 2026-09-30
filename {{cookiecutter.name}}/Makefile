@@ -13,6 +13,7 @@ ifeq (${VIRTUAL_ENV},)
  	$(error Please activate a venv before proceeding)
 endif
 
+.PHONY: help
 help:  ## Show this help.
 	@sed -ne '/@sed/!s/[^:]*[#][#]//p' $(MAKEFILE_LIST)
 
@@ -31,6 +32,8 @@ endif
 # there are two different targets for each dependency file:
 # requirements(-dev) always regenerates the requirements files,
 # requirements(-dev).txt only generates them, when they're not found
+
+.PHONY: requirements-min requirements-dev requirements
 
 DEFAULT_COMPILE_ARGS = --generate-hashes --strip-extras --no-annotate
 
@@ -60,6 +63,8 @@ requirements: requirements-min requirements-dev ## (Re-)generate and update both
 ##   Syncing Dependencies
 ##
 
+.PHONY: sync-min sync-dev sync
+
 DEFAULT_SYNC_ARGS = --allow-empty-requirements --torch-backend=auto
 
 sync-min: requirements.txt ## Synchronise contents of venv and requirements.txt.
@@ -74,6 +79,8 @@ sync: sync-dev ## Synonymous with sync-dev.
 ##   Installing the Project
 ##
 
+.PHONY: install-min install-dev install
+
 install-min: sync-min ## Install the project with minimal dependencies.
 	uv pip install . --no-deps
 
@@ -85,6 +92,8 @@ install: sync-min ## Synonymous with install-min.
 ##
 ##   Updating Dependencies
 ##
+
+.PHONY: update-min update-dev update
 
 update-min: requirements-min install-min ## Regenerate requirements.txt and synchronise the venv.
 
