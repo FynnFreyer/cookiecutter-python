@@ -7,6 +7,7 @@ This is a clean template that scripts can be based on.
 # from __future__ import annotations
 
 from argparse import ArgumentParser, Namespace, RawDescriptionHelpFormatter
+from logging import basicConfig, getLogger, DEBUG, INFO, WARNING
 from pathlib import Path
 from sys import exit, stderr
 from traceback import format_exception, format_exception_only
@@ -22,6 +23,7 @@ from .__about__ import (
 
 # TODO: globals go here (use SPARINGLY, for reasoning see https://dl.acm.org/doi/10.1145/953353.953355)
 VERBOSE = False
+LOGGER = getLogger(__project__)
 SCRIPT_DIR = Path(__file__).parent.resolve()
 
 
@@ -44,20 +46,33 @@ def parse_args(argv: list[str] | None = None) -> Namespace:
     # parser.add_argument("something", type=int,
     #                     help="some integer value")
 
-    # # Flags
+    # # Custom Options and Flags
     # default_something = 16  # default values should be shown in help
     # parser.add_argument("-a", "--anotherthing", type=int, default=default_something,
     #                     help=f"another integer value (default: {default_something})")
 
+    # Default Flags
     parser.add_argument("-v", "--verbose", action="store_true",
                         help="print more verbose output")
+    parser.add_argument("--debug", action="store_true",
+                        help="print debugging output, implies verbose")
+    parser.add_argument("-l", "--log", type=Path,
+                        help="write logs to a file instead of stdout")
     parser.add_argument("-V", "--version", action="version", version=__version__,
                         help="display the version of this script")
 
     args = parser.parse_args(argv)
 
+    # set verbosity and log level
     global VERBOSE
-    VERBOSE = args.verbose
+    if args.debug:
+        VERBOSE = True
+        log_level = DEBUG
+    else:
+        VERBOSE = args.verbose
+        log_level = INFO if VERBOSE else WARNING
+    log_kwargs = {"filename": args.log, "encoding": "utf-8"} if args.log else {}
+    basicConfig(level=log_level, **log_kwargs)
 
     # TODO (optional): do further post processing/validation of args
 
@@ -71,7 +86,7 @@ def helper(argument: Any) -> None:
     :param argument: An argument to the function...
     :returns: Something or nothing...
     """
-    print(argument)
+    LOGGER.info(argument)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -87,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     except Exception as e:  # noqa -- broadly catching anything is what we want here
         err = "".join(format_exception(e) if VERBOSE else format_exception_only(e))
-        print(err, file=stderr)
+        LOGGER.error(err, file=stderr)
         return 1
 
 
