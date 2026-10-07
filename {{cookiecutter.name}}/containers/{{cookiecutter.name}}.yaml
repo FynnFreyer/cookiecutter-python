@@ -1,0 +1,34 @@
+# template for how the yaml config for a kube quadlet might look
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{cookiecutter.name}}-pod"
+  labels:
+    app: "{{cookiecutter.name}}-app"
+spec:
+  volumes:
+    - name: pgdata
+      persistentVolumeClaim:
+        claimName: postgres-data
+  containers:
+    - name: {{cookiecutter.name}}
+      image: localhost/{{cookiecutter.name}}:latest
+      envFrom:
+        - configMapRef:
+            name: .env
+      ports:
+        # TODO: set the appropriate ports
+        - containerPort: 8000
+          hostPort: 8000
+
+    - name: postgres
+      image: docker.io/library/postgres:16-alpine
+      envFrom:
+        - configMapRef:
+            name: .env
+      volumeMounts:
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+
+    - name: memcached
+      image: docker.io/library/memcached:1.6-alpine

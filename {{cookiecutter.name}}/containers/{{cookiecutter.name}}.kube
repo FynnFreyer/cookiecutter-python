@@ -1,0 +1,28 @@
+[Unit]
+Description=%N pod
+After=network-online.target
+
+[Kube]
+Yaml=%N.yaml
+# TODO: set the correct path
+ConfigMap=%h/.env
+
+[Build]
+ImageTag=localhost/%N:latest
+# Build with lower privileges
+User=%N
+Group=%N
+# TODO: set build context to the repository root
+SetWorkingDirectory=%h
+# Containerfile (relative to SetWorkingDirectory)
+File=containers/Containerfile
+
+[Service]
+Restart=always
+# Run the service with lower privileges
+User=%N
+Group=%N
+RuntimeDirectory=%N
+
+[Install]
+WantedBy=default.target

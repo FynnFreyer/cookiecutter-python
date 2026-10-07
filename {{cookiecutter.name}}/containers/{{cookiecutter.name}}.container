@@ -1,0 +1,33 @@
+# template for how a container quadlet might look
+[Unit]
+Description=%N service
+After=network-online.target
+
+[Container]
+ContainerName=%N
+Image=localhost/%N:latest
+# TODO: publish appropriate port
+PublishPort=8000:8000
+
+# Allow running the service with lower privileges
+PodmanArgs=--cidfile=%t/%N/%N.cid
+
+[Build]
+ImageTag=localhost/%N:latest
+# Build with lower privileges
+User=%N
+Group=%N
+# TODO: set build context to the repository root
+SetWorkingDirectory=%h
+# Containerfile (relative to SetWorkingDirectory)
+File=containers/Containerfile
+
+[Service]
+Restart=always
+# Run the service with lower privileges
+User=%N
+Group=%N
+RuntimeDirectory=%N
+
+[Install]
+WantedBy=default.target

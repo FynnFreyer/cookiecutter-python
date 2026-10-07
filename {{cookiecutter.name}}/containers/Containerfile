@@ -1,0 +1,19 @@
+FROM python:3.14-slim
+
+# This layer is cached unless dependencies change
+COPY requirements.txt /
+RUN pip install --no-cache-dir -r requirements.txt
+
+# The following layers rebuild on every source change
+COPY . /app
+RUN pip install --no-cache-dir /app \
+ && rm -rf /app
+
+# Run as non-root
+RUN useradd -u 1000 {{cookiecutter.name}}
+USER {{cookiecutter.name}}
+
+# TODO: expose appropriate port
+EXPOSE 8000
+
+CMD ["{{cookiecutter.name}}"]
